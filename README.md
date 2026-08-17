@@ -10,6 +10,8 @@ Every submission must include:
     A clear explanation of how Bright Data Scraper Studio is used
 
 
+This project is a A system that converts unreliable external observations into a trustworthy, queryable dataset.
+
 Tech Stack:
 Frontend: Next.JS + React + TailwindCss
 Backend: Go, PostgreSQL 
