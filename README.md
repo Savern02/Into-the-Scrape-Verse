@@ -21,6 +21,14 @@ Backend: Go, PostgreSQL
 | PostgreSQL     | Canonical structured data   | **Managed PostgreSQL**         |
 | Object storage | Raw Bright Data data        | **Managed object storage, S3** |
 
+but for the hackathon:
+| Component   | Free option                   | What runs there                       |
+| ----------- | ----------------------------- | ------------------------------------- |
+| Web app     | **Vercel**                    | Next.js frontend + server             |
+| PostgreSQL  | **Supabase Free**             | Canonical data                        |
+| Raw storage | **Cloudflare R2**             | Bright Data raw files                 |
+| Go pipeline | **Google Cloud free-tier VM** | Go workers/scheduler                  |
+| Scraping    | Bright Data                   | Your existing scraping infrastructure |
 
 
 
