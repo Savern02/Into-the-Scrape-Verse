@@ -14,6 +14,12 @@ Tech Stack:
 Frontend: Next.JS + React + TailwindCss
 Backend: Go, PostgreSQL 
 
+| Component      | What it does                | Where it runs                  |
+| -------------- | --------------------------- | -----------------------------  |
+| Next.js        | Web app + server-side logic | **Vercel**                     |
+| Go             | Data processing/workers     | **VPS**                        |
+| PostgreSQL     | Canonical structured data   | **Managed PostgreSQL**         |
+| Object storage | Raw Bright Data data        | **Managed object storage, S3** |
 
 
 
