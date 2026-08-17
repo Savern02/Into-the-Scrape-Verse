@@ -8,3 +8,8 @@ Every submission must include:
     Example structured output
     A demo video showing the working project
     A clear explanation of how Bright Data Scraper Studio is used
+
+
+Tech Stack:
+Frontend: Next.JS + React + TailwindCss
+Backend: Go, PostgreSQL 
