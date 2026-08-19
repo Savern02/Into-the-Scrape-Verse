@@ -11,6 +11,7 @@
 # env files
 /web-app/.env*.local
 /web-app/.env
+.env
 
 # Vercel
 /web-app/.vercel/
