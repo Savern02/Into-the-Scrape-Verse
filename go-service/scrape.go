@@ -13,8 +13,7 @@ type WalmartProductData struct {
 type WalmartSearchPageData struct {
 }
 
-// func ScrapeWalmartProductData(productString string) error {
-func WalmartScrape() error {
+func ScrapeWalmartProductData(productString string) error {
 	var apiKey = os.Getenv("BRIGHT_DATA_API_KEY")
 	if apiKey == "" {
 		panic("BRIGHT_DATA_API_KEY environment variable is not set")
