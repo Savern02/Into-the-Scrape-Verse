@@ -23,7 +23,7 @@ export function Header() {
             <div>
            <Suspense fallback={<div>Loading...</div>}>
              <AuthButton />
-            {// add a Dashboard button that only appears when user has logged in}
+            {/* add a Dashboard button that only appears when user has logged in*/}
             </Suspense>
             </div>
           </div>
