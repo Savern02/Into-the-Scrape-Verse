@@ -1,4 +1,3 @@
-import { AuthButton } from "@/components/auth-button";
 import { Hero } from "@/components/main/hero";
 import {Header} from "@/components/main/header"
 import { ThemeSwitcher } from "@/components/theme-switcher";
