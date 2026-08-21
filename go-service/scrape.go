@@ -21,10 +21,10 @@ func ScrapeWalmartProductData(productURL string, zipcode string) error {
 
 	// The datasetId tells Bright Data which scraper to use and how to parse it. The only way I know of finding this is to go to the scraper's
 	//  page on the Bright Data website and look at the curl command. The datasetId will look like "dataset_id=gd_{x}" where {x} is a random string of letters and numbers.
-	datasetId := "gd_l95fol7l1ru6rlo116"
+	datasetId := "gd_m693oc1r1gebnayxq"
 	endpoint := "https://api.brightdata.com/datasets/v3/scrape?dataset_id=" + datasetId + "&format=json"
 	payload := strings.NewReader(`[
-    {"url": "` + productURL + `", "zipcode": "` + zipcode + `"}
+    {"url": "` + productURL + `", "zip_code": "` + zipcode + `", "store_id":""}
 	]`)
 
 	req, err := http.NewRequest("POST", endpoint, payload)
@@ -56,12 +56,65 @@ func ScrapeWalmartProductData(productURL string, zipcode string) error {
 
 	// Now store this response.json file in the Cloudflare R2 bucket.
 	err = StoreObjectInR2("response.json", "Snapshots/ItemSnapshots/")
+	if err != nil {
+		return fmt.Errorf("Failed to store object in R2 bucket: %v", err)
+	}
 
 	return nil
 }
 
 // The purpose of this function is to take a search query and apply it to the walmart search url before scraping that specific
 // search page result for all of the matching product urls.
-func ScrapeWalmartSearchData(searchQuery string) error {
+func ScrapeWalmartSearchData(searchQuery string, zipcode string) error {
+
+	var apiKey = os.Getenv("BRIGHT_DATA_API_KEY")
+	if apiKey == "" {
+		panic("BRIGHT_DATA_API_KEY environment variable is not set")
+	}
+
+	// The datasetId tells Bright Data which scraper to use and how to parse it. The only way I know of finding this is to go to the scraper's
+	//  page on the Bright Data website and look at the curl command. The datasetId will look like "dataset_id=gd_{x}" where {x} is a random string of letters and numbers.
+	datasetId := "gd_m7khey0wb7wviejgj"
+	endpoint := "https://api.brightdata.com/datasets/v3/scrape?dataset_id=" + datasetId + "&format=json"
+
+	searchURL := fmt.Sprintf("https://www.walmart.com/search?q=%s", searchQuery)
+
+	payload := strings.NewReader(`[
+    {"url": "` + searchURL + `"}
+	]`)
+
+	req, err := http.NewRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+
+	// Just adds the API key and content type to the request headers for authentication and content type specification.
+	req.Header.Add("Authorization", "Bearer "+apiKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("Failed to make request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Store the response into a json file that we can then submit to the R2 object storage.
+	file, err := os.Create("response.json")
+	if err != nil {
+		return fmt.Errorf("Failed to create response.json file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return fmt.Errorf("Failed to write response body to file: %v", err)
+	}
+
+	// Now store this response.json file in the Cloudflare R2 bucket.
+	err = StoreObjectInR2("response.json", "Snapshots/SearchSnapshots/")
+	if err != nil {
+		return fmt.Errorf("Failed to store object in R2 bucket: %v", err)
+	}
+
 	return nil
 }

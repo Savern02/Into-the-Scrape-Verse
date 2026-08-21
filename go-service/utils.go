@@ -46,7 +46,7 @@ func StoreObjectInR2(filename string, path string) error {
 	}
 	defer file.Close()
 
-	// Generate a unique object key for the R2 bucket using the SHA-256 hash of the JSON data.
+	// Generate a unique object key for the R2 bucket.
 	objectKey := GenObjectKeyByUUID(path)
 
 	// Upload the JSON data to the R2 bucket.

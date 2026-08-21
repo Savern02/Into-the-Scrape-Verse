@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/joho/godotenv"
 )
 
@@ -15,10 +13,6 @@ func main() {
 
 	// Set up HTTP server.
 
-	// Testing functions.
-	fmt.Println("Scraping Walmart product data...")
-	err = ScrapeWalmartProductData("https://www.walmart.com/ip/Hershey-s-Kit-Kat-And-Reese-s-Assorted-Flavored-Candy-Party-Pack-33-38-oz/466623588", "74112")
-	if err != nil {
-		panic(err)
-	}
+	// Testing functions
+	ScrapeWalmartSearchData("beans", "74112")
 }
