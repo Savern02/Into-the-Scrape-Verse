@@ -200,7 +200,10 @@ type Health struct {
 }
 
 func (s *Store) RecordHealth(ctx context.Context, h Health) error {
-	rates, _ := json.Marshal(h.NullRates)
+	// string, not []byte: under the simple protocol pgx encodes a byte slice as
+	// a bytea hex literal, which Postgres rejects for a jsonb column.
+	ratesJSON, _ := json.Marshal(h.NullRates)
+	rates := string(ratesJSON)
 	var healedAt *time.Time
 	if h.Healed {
 		now := time.Now()
