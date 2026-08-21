@@ -220,3 +220,66 @@ func (s *Store) RecordHealth(ctx context.Context, h Health) error {
 }
 
 func (s *Store) Close() { s.pool.Close() }
+
+// ---------------------------------------------------------------
+// Reprocessing
+// ---------------------------------------------------------------
+
+type Ingest struct {
+	ID          int64
+	CollectorID string
+	SnapshotID  string
+	ObjectKey   string
+	RowCount    int
+	Status      string
+}
+
+// ListIngests returns preserved snapshots, newest first. This is the index
+// into object storage: every row here points at raw bytes that can be run
+// through the pipeline again without spending a scraping credit.
+func (s *Store) ListIngests(ctx context.Context, collectorID string, limit int) ([]Ingest, error) {
+	rows, err := s.pool.Query(ctx, `
+		select id, collector_id, coalesce(snapshot_id,''), object_key,
+		       row_count, status
+		  from raw_ingests
+		 where ($1 = '' or collector_id = $1)
+		   and status <> 'failed'
+		 order by received_at desc
+		 limit $2`, collectorID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []Ingest
+	for rows.Next() {
+		var i Ingest
+		if err := rows.Scan(&i.ID, &i.CollectorID, &i.SnapshotID,
+			&i.ObjectKey, &i.RowCount, &i.Status); err != nil {
+			return nil, err
+		}
+		out = append(out, i)
+	}
+	return out, rows.Err()
+}
+
+// ActiveCollectors is what the scheduler iterates over.
+func (s *Store) ActiveCollectors(ctx context.Context) ([]Collector, error) {
+	rows, err := s.pool.Query(ctx, `
+		select id, retailer_id, scraper_type, coalesce(target_url,'')
+		  from collectors where active order by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []Collector
+	for rows.Next() {
+		var c Collector
+		if err := rows.Scan(&c.ID, &c.RetailerID, &c.Type, &c.TargetURL); err != nil {
+			return nil, err
+		}
+		out = append(out, c)
+	}
+	return out, rows.Err()
+}
