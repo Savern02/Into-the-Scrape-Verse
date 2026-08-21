@@ -46,6 +46,8 @@ type Config struct {
 }
 
 func Load() Config {
+	loadDotEnv(".env")
+
 	c := Config{
 		DatabaseURL:     req("DATABASE_URL"),
 		BrightDataToken: os.Getenv("BRIGHTDATA_TOKEN"),
