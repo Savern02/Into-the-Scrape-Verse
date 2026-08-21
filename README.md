@@ -1,239 +1,79 @@
-# Into-the-Scrape-Verse
-You write a scraper, it works, and a week later the site changes its layout and everything breaks quietly. Build one that repairs itself instead, run it from your coding agent, and spend the week turning the data into something real. https://www.wemakedevs.org/hackathons/scrape-verse/resourcesv
+# Cheap Chick
+https://www.wemakedevs.org/hackathons/scrape-verse 
+Be a Cheap Chick and save money on the groceries you buy every day.
 
-Every submission must include:
+## What is Cheap Chick
 
-    A public source-code repository
-    A clear README
-    Example structured output
-    A demo video showing the working project
-    A clear explanation of how Bright Data Scraper Studio is used
+Cheap Chick is a grocery comparison site that gathers groceries from popular supermarkets. Either by individual items or providing a grocery list, Cheap Chick allows you to save money on your daily necessities.
 
+## The Problem
 
-This project is a A system that converts unreliable external observations into a trustworthy, queryable dataset.
+Grocery prices vary significantly between stores, but comparing prices manually
+is time-consuming. Existing grocery comparison tools often depend on static
+datasets that become outdated. The UI is clunky and the data is usually inaccurate.
 
-Tech Stack:
-Frontend: Next.JS + React + TailwindCss
-Backend: Go, PostgreSQL 
+Cheap Chick automates the collection and validation of grocery prices so users
+can compare current prices across supermarkets without checking each store
+individually.
 
-| Component      | What it does                | Where it runs                  |
-| -------------- | --------------------------- | -----------------------------  |
-| Next.js        | Web app + server-side logic | **Vercel**                     |
-| Go             | Data processing/workers     | **VPS**                        |
-| PostgreSQL     | Canonical structured data   | **Managed PostgreSQL**         |
-| Object storage | Raw Bright Data data        | **Managed object storage, S3** |
+## Key features
 
-but for the hackathon:
-| Component   | Free option                   | What runs there                       |
-| ----------- | ----------------------------- | ------------------------------------- |
-| Web app     | **Vercel**                    | Next.js frontend + server             |
-| PostgreSQL  | **Supabase Free**             | Canonical data                        |
-| Raw storage | **Cloudflare R2**             | Bright Data raw files                 |
-| Go pipeline | **Google Cloud free-tier VM** | Go workers/scheduler                  |
-| Scraping    | Bright Data                   | Your existing scraping infrastructure |
+* Self-repairing scrapers that are powered by Bright Data
+* Go Service Pipeline for Data Validation and Ingest
+* Agent-driven orchestration (run scrapers from a coding/automation agent)
+* Modular TypeScript codebase for scraper logic, repair heuristics, and data processing powered by Supabase for Storage and Auth
+* Easy to extend: add new site adapters, repair strategies, and downstream transforms
 
+## Stack
 
+* Language: TypeScript
+* Next.js, Tailwind CSS, ShadCN, and Supabase.
 
-Current architecture: 
-Price Comparison Platform — Architecture
-Overview
+## Project Directory
 
-The application is built around a data-processing pipeline rather than treating the project as a traditional web application.
+go-service ---> Contains Services for the Data Pipeline
+web-app ---> Contains Next.js web app
 
-The core architecture is:
+## Quickstart (example)
 
-Retailer Websites
-       │
-       ▼
- Bright Data
-       │
-       ▼
- Object Storage
-   (Raw Data)
-       │
-       ▼
- Go Data Pipeline
- ├── Validation
- ├── Filtering
- ├── Normalization
- ├── Product Matching
- └── Derived Calculations
-       │
-       ▼
- PostgreSQL
- (Canonical Data)
-       │
-       ▼
-    Next.js
-   Web App
-       │
-       ▼
-     Users
-Components
-Bright Data
+Install dependencies:
+npm install
+Start the dev runner (example):
+npm run dev
+Build for production:
+npm run build
+Run tests:
+npm test
 
-Responsible for collecting data from retailer websites.
+## Configuration
 
-Bright Data provides the raw source data. The application does not treat scraped data as automatically correct.
+Typical environment variables/config you’ll likely see or want:
 
-Object Storage
+## Architecture (high level)
 
-Stores the raw Bright Data responses.
+* go agents/ — orchestrates scraping runs and repair attempts (agent loop detects failures and triggers repairs)
+* scrapers/ — per-site adapters: navigation, selectors, and extraction rules
+* processors/ — normalize and persist scraped data to storage
+* auth/ contains all the Next.js logic
 
-Raw data is preserved so that the processing pipeline can be changed or improved without requiring the data to be scraped again.
+## Data Pipeline
 
-raw/
-├── retailer-a/
-│   └── 2026-08-17/
-├── retailer-b/
-│   └── 2026-08-17/
-└── retailer-c/
-    └── 2026-08-17/
-Go Data Pipeline
+The agent runs scraping sessions through site adapters; failures are surfaced to the repair component which applies a sequence of heuristics/tests to restore extraction, then the pipeline re-runs and persists the recovered output.
 
-The Go service is responsible for processing and maintaining the application's data.
+## Configuration
 
-Responsibilities include:
+Create a `.env.local` file in `web-app`:
 
-Data ingestion
-Filtering
-Validation
-Normalization
-Deduplication
-Product matching
-Price calculations
-Data quality checks
-Updating PostgreSQL
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+```
 
-The Go pipeline runs independently of user requests and can be triggered by scheduled jobs or, as the system grows, a job queue.
+## Acknowledgements
 
-PostgreSQL
+Organized for the WeMakeDevs Scrape-Verse hackathon — see resources at https://www.wemakedevs.org/hackathons/scrape-verse/resourcesv
 
-PostgreSQL stores the canonical, validated representation of the data used by the application.
+## License
 
-Examples include:
+TBD — add your chosen license (e.g., MIT) or check the repository’s LICENSE file.
 
-Products
-Retailers
-Offers
-Prices
-Price history
-Categories
-Product relationships
-
-PostgreSQL is the application's source of truth for canonical data.
-
-Next.js
-
-Next.js is responsible for the web application.
-
-Responsibilities include:
-
-Search
-Product pages
-Price comparisons
-Filtering and sorting
-User accounts
-Preferences
-SEO
-Price history visualization
-
-Next.js consumes the canonical data produced by the Go pipeline.
-
-Separation of Responsibilities
-
-The system intentionally separates data acquisition, processing, storage, and presentation.
-
-Bright Data
-    │
-    │ Collects
-    ▼
-Object Storage
-    │
-    │ Raw data
-    ▼
-Go Pipeline
-    │
-    │ Processes
-    ▼
-PostgreSQL
-    │
-    │ Canonical data
-    ▼
-Next.js
-    │
-    │ Presents
-    ▼
-Users
-Key Principle
-
-Raw observations are preserved; everything else is derived.
-
-This allows transformations and business rules to evolve without necessarily requiring the data to be collected again.
-
-For example, if we later introduce:
-
-price_per_oz
-price_per_lb
-price_per_100g
-
-we can update the transformation pipeline and reprocess existing raw data.
-
-Data Independence
-
-The Go pipeline and Next.js application operate independently.
-
-If the Go pipeline is temporarily unavailable, Next.js can continue serving the latest known-good data from PostgreSQL.
-
-If Next.js is unavailable, the Go pipeline can continue collecting and processing data.
-
-┌─────────────────┐          ┌─────────────────┐
-│   Go Pipeline   │          │     Next.js     │
-│                 │          │                 │
-│ Process Data   │          │ Serve Users     │
-└────────┬────────┘          └────────┬────────┘
-         │                            │
-         │         PostgreSQL         │
-         └──────────────┬─────────────┘
-                        │
-                        ▼
-                 Canonical Data
-Initial Technology Stack
-Component	Technology	Purpose
-Data Acquisition	Bright Data	Collect retailer data
-Raw Storage	Object Storage	Preserve raw scraped data
-Data Processing	Go	Validate and transform data
-Database	PostgreSQL	Store canonical data
-Web Application	Next.js	Serve the user-facing application
-Future Scaling
-
-The initial architecture should remain simple.
-
-As data volume increases, the system can introduce:
-
-Job queues
-Multiple Go workers
-Dedicated APIs
-Analytics databases
-Data warehouse infrastructure
-More sophisticated product-matching systems
-
-These can be added without fundamentally changing the core architecture.
-
-Bright Data
-     ↓
-Object Storage
-     ↓
-Go Workers
-     ↓
-PostgreSQL
-     ↓
-Next.js
-     ↓
-Users
-
-The data pipeline is the core of the platform; Next.js is the interface through which users consume the resulting data.
-
-
-
-sqlc
