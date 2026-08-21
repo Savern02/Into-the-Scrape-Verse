@@ -1,5 +1,5 @@
 # Cheap Chick
-
+https://www.wemakedevs.org/hackathons/scrape-verse 
 Be a Cheap Chick and save money on the groceries you buy every day.
 
 ## What is Cheap Chick
