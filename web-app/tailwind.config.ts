@@ -11,6 +11,10 @@ export default {
   theme: {
     extend: {
       colors: {
+        "light-green":{
+        1: "#9be6ad",
+        },
+
         seaweed: {
         50: "#eef7f3",
         100: "#dcefe6",

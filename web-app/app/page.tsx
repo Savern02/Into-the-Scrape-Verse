@@ -7,7 +7,7 @@ import { Suspense } from "react";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col items-center">
+      <div className="flex-1 w-full flex flex-col items-center bg-banana-cream-50">
           <Header />
         <div className="flex-1 flex w-full flex-col gap-20 max-w-5xl p-10 bg-seaweed-500 text-white">
           <Hero />
