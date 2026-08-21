@@ -13,6 +13,9 @@ var (
 	priceRe    = regexp.MustCompile(`(\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)`)
 	nonAlnumRe = regexp.MustCompile(`[^a-z0-9]+`)
 	packRe     = regexp.MustCompile(`(?i)\b(\d+)\s*[- ]?\s*(ct|count|pack|pk|pc|pcs|piece|sheets?|ream|box|case|each|ea)\b`)
+	// "Set of 400", "Pack of 12", "Case of 6" -- the dominant form on
+	// education-supply sites, where bulk classpacks are the whole catalogue.
+	setOfRe = regexp.MustCompile(`(?i)\b(?:set|pack|box|case|classpack)\s+of\s+(\d+)\b`)
 )
 
 // PriceCents turns whatever the scraper handed back into integer cents.
@@ -67,6 +70,13 @@ func slug(s string) string {
 // This is the whole point of the calculator: a district buying a case of 10
 // reams needs cost per sheet, not cost per SKU.
 func Pack(title string) (count float64, unitType string) {
+	// "Set of N" wins when present: a title like "Value Pack - Set of 400"
+	// contains both forms and the explicit count is the right one.
+	if m := setOfRe.FindStringSubmatch(title); len(m) == 2 {
+		if n, err := strconv.ParseFloat(m[1], 64); err == nil && n > 0 {
+			return n, "each"
+		}
+	}
 	m := packRe.FindStringSubmatch(title)
 	if len(m) != 3 {
 		return 0, "each"

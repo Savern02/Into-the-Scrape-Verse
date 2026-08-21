@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -25,18 +26,160 @@ type Job struct {
 // RawRow is the loose shape coming off the scraper. Everything is a string
 // because that is what extraction gives you and because assuming otherwise is
 // how pipelines break silently.
+//
+// The AI names fields from your create/heal description, and those names drift
+// between scrapers -- a discovery scraper returns product_title/product_url
+// while a PDP scraper returns title/url. Rather than rewrite this struct every
+// time, accept both and resolve in Normalize().
 type RawRow struct {
-	Title       string `json:"title"`
-	Brand       string `json:"brand"`
-	Price       string `json:"price"`
-	ListPrice   string `json:"list_price"`
-	Currency    string `json:"currency"`
-	SKU         string `json:"sku"`
-	URL         string `json:"url"`
-	Category    string `json:"category"`
-	Availability  string `json:"availability"`
-	EduPricing  string `json:"edu_pricing"`
-	MinBulkQty  int    `json:"min_bulk_qty"`
+	Title        string `json:"title"`
+	ProductTitle string `json:"product_title"`
+	Name         string `json:"name"`
+
+	Brand string `json:"brand"`
+
+	// Scraper Studio returns money either as a plain string ("$12.99") or as a
+	// nested object ({"value":99.99,"currency":"USD","symbol":"$"}). A single
+	// field of the wrong type kills the whole json.Unmarshal, so both shapes
+	// have to be accepted here -- see Money below.
+	Price      Money  `json:"price"`
+	ListPrice  Money  `json:"list_price"`
+	Currency   string `json:"currency"`
+	SKU        string `json:"sku"`
+	ItemNumber string `json:"item_number"`
+
+	URL            string `json:"url"`
+	ProductURL     string `json:"product_url"`
+	ProductPageURL string `json:"product_page_url"`
+
+	Category     string `json:"category"`
+	Availability string `json:"availability"`
+	InStock      *bool  `json:"in_stock"`
+	EduPricing   string `json:"edu_pricing"`
+	MinBulkQty   int    `json:"min_bulk_qty"`
+}
+
+// Money accepts a bare string, a bare number, or an object with a value field.
+// It always presents itself downstream as a string for normalize.PriceCents.
+type Money struct {
+	Text     string
+	Currency string
+}
+
+func (m *Money) UnmarshalJSON(b []byte) error {
+	s := strings.TrimSpace(string(b))
+	if s == "" || s == "null" {
+		return nil
+	}
+
+	// Bare string: "$12.99"
+	var asStr string
+	if err := json.Unmarshal(b, &asStr); err == nil {
+		m.Text = asStr
+		return nil
+	}
+
+	// Bare number: 12.99
+	var asNum float64
+	if err := json.Unmarshal(b, &asNum); err == nil {
+		m.Text = strconv.FormatFloat(asNum, 'f', -1, 64)
+		return nil
+	}
+
+	// Object: {"value":99.99,"currency":"USD","symbol":"$"}
+	var obj struct {
+		Value    json.RawMessage `json:"value"`
+		Amount   json.RawMessage `json:"amount"`
+		Currency string          `json:"currency"`
+	}
+	if err := json.Unmarshal(b, &obj); err != nil {
+		// Unknown shape. Swallow it rather than failing the whole batch --
+		// the row will be dropped and counted as a null, which is exactly
+		// what the health check is for.
+		return nil
+	}
+	m.Currency = obj.Currency
+
+	raw := obj.Value
+	if len(raw) == 0 {
+		raw = obj.Amount
+	}
+	if len(raw) == 0 {
+		return nil
+	}
+	var n float64
+	if err := json.Unmarshal(raw, &n); err == nil {
+		m.Text = strconv.FormatFloat(n, 'f', -1, 64)
+		return nil
+	}
+	var t string
+	if err := json.Unmarshal(raw, &t); err == nil {
+		m.Text = t
+	}
+	return nil
+}
+
+func (m Money) String() string { return m.Text }
+
+// Normalize collapses the alternate field names down to the canonical ones and
+// undoes the duplication we see when a selector matches a product tile twice
+// (many sites render desktop and mobile variants of the same markup).
+func (r *RawRow) Normalize() {
+	if r.Currency == "" {
+		r.Currency = firstNonEmpty(r.Price.Currency, r.ListPrice.Currency)
+	}
+	r.Title = firstNonEmpty(r.Title, r.ProductTitle, r.Name)
+	r.URL = firstNonEmpty(r.URL, r.ProductURL, r.ProductPageURL)
+	r.SKU = firstNonEmpty(r.SKU, r.ItemNumber)
+
+	r.Title = dedupeRepeat(r.Title)
+	r.Brand = dedupeRepeat(r.Brand)
+	r.SKU = dedupeRepeat(r.SKU)
+
+	// "Item # ALLSILK" -> "ALLSILK"
+	if i := strings.Index(strings.ToLower(r.SKU), "item #"); i >= 0 {
+		r.SKU = strings.TrimSpace(r.SKU[i+len("item #"):])
+	}
+}
+
+func firstNonEmpty(vals ...string) string {
+	for _, v := range vals {
+		if strings.TrimSpace(v) != "" {
+			return strings.TrimSpace(v)
+		}
+	}
+	return ""
+}
+
+// dedupeRepeat turns "Crayola Crayola" into "Crayola" and an 8x repeated title
+// back into one. Works by finding the shortest prefix that, repeated, rebuilds
+// the whole string. Leaves genuinely non-repeating text alone.
+func dedupeRepeat(s string) string {
+	s = strings.Join(strings.Fields(s), " ")
+	if s == "" {
+		return s
+	}
+	words := strings.Fields(s)
+	n := len(words)
+	for size := 1; size <= n/2; size++ {
+		if n%size != 0 {
+			continue
+		}
+		unit := words[:size]
+		match := true
+		for i := size; i < n && match; i += size {
+			for j := 0; j < size; j++ {
+				if !strings.EqualFold(words[i+j], unit[j]) {
+					match = false
+					break
+				}
+			}
+		}
+		if match {
+			return strings.Join(unit, " ")
+		}
+	}
+	return s
 }
 
 type Pipeline struct {
@@ -136,6 +279,8 @@ func (p *Pipeline) process(ctx context.Context, job Job) error {
 	written, dropped := 0, 0
 
 	for _, r := range rows {
+		r.Normalize()
+
 		if r.Title == "" {
 			nulls["title"]++
 		}
@@ -143,7 +288,7 @@ func (p *Pipeline) process(ctx context.Context, job Job) error {
 			nulls["url"]++
 		}
 
-		priceCents, perr := normalize.PriceCents(r.Price)
+		priceCents, perr := normalize.PriceCents(r.Price.String())
 		if perr != nil {
 			nulls["price"]++
 		}
@@ -154,12 +299,15 @@ func (p *Pipeline) process(ctx context.Context, job Job) error {
 			continue
 		}
 
-		listCents, _ := normalize.PriceCents(r.ListPrice)
+		listCents, _ := normalize.PriceCents(r.ListPrice.String())
 		count, unitType := normalize.Pack(r.Title)
 		title := normalize.Title(r.Title)
 		key := normalize.CanonicalKey(r.Brand, title, count, unitType)
 
-		inStock := parseStock(r.Availability)
+		inStock := r.InStock
+		if inStock == nil {
+			inStock = parseStock(r.Availability)
+		}
 		currency := r.Currency
 		if currency == "" {
 			currency = "USD"
