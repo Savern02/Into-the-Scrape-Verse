@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   return (
@@ -24,6 +25,7 @@ export default function Page() {
                 confirm your account before signing in.
               </p>
             </CardContent>
+            <Button></Button>
           </Card>
         </div>
       </div>
