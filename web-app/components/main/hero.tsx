@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
+import { ProductCard } from "@/components/g-ui/item"
 import {
   Card,
   CardContent,
@@ -45,7 +46,13 @@ export function Hero() {
 <div className="grid col-start-2">
   <Carousel>
   <CarouselContent>
-    <CarouselItem>BEANS1</CarouselItem>
+    <CarouselItem>
+                  <ProductCard image="https://i5.walmartimages.com/seo/Red-Bull-Amber-Edition-Sugar-Free-Energy-Drink-Strawberry-Apricot-114mg-Caffeine-12-fl-oz-Pack-of-4-Cans_89dee0d8-212d-4e07-bbdd-d9d707003190.83ecf6741e5ae0f8a5affc87bb508771.jpeg"
+  name="Red Bull Amber Edition Sugarfree Energy Drink, Strawberry Apricot"
+  itemUrl="https://www.walmart.com/ip/Red-Bull-Amber-Edition-Sugar-Free-Energy-Drink-Strawberry-Apricot-12-fl-oz-Pack-of-4-Cans/5332753715"
+  price="$10.75"
+  website="Walmart"/>
+                </CarouselItem>
     <CarouselItem>BEANS2</CarouselItem>
     <CarouselItem>BEANS3</CarouselItem>
   </CarouselContent>
@@ -53,8 +60,13 @@ export function Hero() {
   <CarouselNext />
 </Carousel></div>
 <div className ="grid col-start-4"><Carousel>
-  <CarouselContent className="flex justify-center">
-    <CarouselItem>TARGET BEANS</CarouselItem>
+  <CarouselContent>
+    <CarouselItem> <ProductCard image="https://i5.walmartimages.com/seo/Red-Bull-Sugar-Free-Energy-Drink-4-pk-Cans-12-oz_75b01883-f18b-45cc-9735-6d56c5a60717.1242b8f1b72564bf2d5aa60c42e8c90a.jpeg"
+                name="Red Bull Sugar Free Energy Drink"
+                itemUrl="https://www.walmart.com/ip/Red-Bull-Sugar-Free-Energy-Drink-4-pk-Cans-12-oz/8639967110?classType=REGULAR Price:19.75 Currency:USD Specs:[{Name:Brand Value:Red Bull} {Name:Flavor Value:Sugar Free} {Name:Size Value:12 oz} {Name:Container type Value:Can} {Name:Texture Value:lightly sparkling} {Name:Food form Value:Liquids} {Name:Food & drug fact label type Value:Nutrition Fact Panel}] Images:[https://i5.walmartimages.com/seo/Red-Bull-Sugar-Free-Energy-Drink-4-pk-Cans-12-oz_75b01883-f18b-45cc-9735-6d56c5a60717.1242b8f1b72564bf2d5aa60c42e8c90a.jpeg https://i5.walmartimages.com/asr/b580bf46-1883-4cb0-b7b8-03486e0d8d7e.e9660ebab2bf280042ecadf1ac5ed60b.jpeg https://i5.walmartimages.com/asr/56400165-82bf-4a70-8f31-bc58b05e2971.7d8a840d9527400b513e3d003959befa.jpeg https://i5.walmartimages.com/asr/dc76e1b4-13aa-48d2-842c-d934b497dbd7.6d278601b08567697b53df620310b862.jpeg https://i5.walmartimages.com/asr/549db7dc-54fa-42ca-b487-ce78fe8f915b.07198fb8e3e03888b7e27f622e5f03d2.jpeg"
+  price="$19.75"
+  website="Walmart"/>
+</CarouselItem>
     <CarouselItem>TARGET BENAS</CarouselItem>
     <CarouselItem>TRAGET BEANS</CarouselItem>
   </CarouselContent>
