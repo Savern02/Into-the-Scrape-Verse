@@ -1,4 +1,7 @@
 import Image from "next/image";
+import { Receipt } from "@/components/util/receipt";
+import { ZipDemo } from "@/components/main/zip-demo"
+import { FileUploadDemo } from "@/components/main/file-upload-demo"
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { ProductCard } from "@/components/g-ui/item"
@@ -98,18 +101,40 @@ export function Hero() {
         id="Grocery List Feature"
         title="Upload Grocery Lists!"
         description="Upload your grocery list to quickly compare prices across different stores. Save time, find better deals, and make sure you're getting the most for your money on every shopping trip."
-      />
-
+      >
+      <FileUploadDemo />
+      </Section>
       <Section
         id="Recipets Feature"
         title="Get Recipets!"
         description="Generate a sample receipt for your grocery list and compare the total cost across different stores. See how much your entire shopping trip would cost and find where you can save the most."
-      />
+      >
+      <div className="flex flex-row gap-5">
+      <Receipt
+    items={[
+      { name: "MILK", price: 3.49 },
+      { name: "EGGS", price: 4.29 },
+      { name: "BREAD", price: 2.99 },
+      { name: "BANANAS", price: 1.87 },
+    ]}
+  />
+              <Receipt
+    items={[
+      { name: "MILK", price: 3.49 },
+      { name: "EGGS", price: 4.29 },
+      { name: "BREAD", price: 2.99 },
+      { name: "BANANAS", price: 1.87 },
+    ]}
+  />
+  </div>
+
+      </Section>
 
       <Section
         title="All Local!"
         description="# All Local! Enter your ZIP code to see grocery prices from stores in your area. Get local pricing for your shopping list and easily compare nearby stores to find the best deals and save money."
       >
+        <ZipDemo />
         <div className="flex flex-col justify-center items-center my-20">
           <Button
             asChild

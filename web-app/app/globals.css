@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* Background */
-    --background: 0 0% 95.3%; /* charcoal-50 */
+    --background: 0 0% 100%; /* charcoal-50 */
     --foreground: 0 0% 10%;   /* charcoal-950 */
 
     /* Cards / Surfaces */

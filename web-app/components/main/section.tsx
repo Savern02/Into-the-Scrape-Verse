@@ -43,7 +43,7 @@ export function Section({
       <div
         className={`flex flex-col justify-center items-center bg-seaweed-500 border-4 transition-all duration-300 ${
           isVisible
-            ? "border-light-yellow-500"
+            ? ""
             : "border-transparent"
         }`}
       >
