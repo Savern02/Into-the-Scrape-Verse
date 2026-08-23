@@ -18,9 +18,12 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: webdev/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        working-directory: ./webdev
+        run: npm install
 
       - name: Type check
+        working-directory: ./webdev
         run: npx tsc -b --noEmit
