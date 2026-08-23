@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AuthButton } from "../auth/auth-button.tsx"
+import { AuthButton } from "@/components/auth/auth-button"
 import { Suspense } from 'react';
 
 export function Header() {

@@ -1,4 +1,3 @@
-import { AuthButton } from "@/components/auth-button";
 import { Hero } from "@/components/main/hero";
 import {Header} from "@/components/main/header"
 import { ThemeSwitcher } from "@/components/theme-switcher";
@@ -8,7 +7,7 @@ import { Suspense } from "react";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <YellowBar />
+      <YellowBar side="left"/>
       <YellowBar side="right"/>
       <div className="flex-1 w-full flex flex-col items-center ">
           <Header />
