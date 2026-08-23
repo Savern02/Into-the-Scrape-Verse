@@ -29,21 +29,23 @@ type Spec struct {
 type WalmartSearchPageData struct {
 }
 
-func ProcessProductData(filename string) {
+func ProcessProductData(filename string) error {
 
 	// This code block will be used to parse the JSON info from the snapshots stored in the Cloudflare R2 bucket.
 	// Some adjustment will be needed to replace the response.json file with the actual snapshot file from the R2 bucket, but this is a good starting point for parsing the JSON data.
 	reader, err := os.Open(filename)
 	if err != nil {
-		fmt.Errorf("Failed to open response.json file: %v", err)
+		return fmt.Errorf("Failed to open response.json file: %v", err)
 	}
 	defer reader.Close()
 
 	var product []WalmartProductData
 	err = json.NewDecoder(reader).Decode(&product)
 	if err != nil {
-		fmt.Errorf("Failed to decode JSON response: %v", err)
+		return fmt.Errorf("Failed to decode JSON response: %v", err)
 	}
 
 	fmt.Printf("Scraped product data: %+v\n", product)
+
+	return nil
 }
