@@ -14,7 +14,7 @@ func main() {
 	// Set up HTTP server.
 
 	// Testing functions
-	err = ScrapeProductData("walmart", "https://www.walmart.com/ip/Red-Bull-Amber-Edition-Sugar-Free-Energy-Drink-Strawberry-Apricot-12-fl-oz-Pack-of-4-Cans/5332753715", "74112")
+	err = ProcessProductData("response.json")
 	if err != nil {
 		panic(err)
 	}

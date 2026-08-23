@@ -1,1 +1,75 @@
-{"snapshot_id":"sd_mt538ws82hppi7yj92","message":"Your request is still in progress and cannot be retrieved in this call. Use the provided Snapshot ID to track progress via the Monitor Snapshot endpoint and download it once ready via the Download Snapshot endpoint. More information on https://docs.brightdata.com/api-reference/web-scraper-api/management-apis/monitor-progress"}
+[
+   {
+      "url": "https://www.walmart.com/ip/Hershey-s-Kit-Kat-And-Reese-s-Assorted-Flavored-Candy-Party-Pack-33-38-oz/466623588",
+      "final_price": 34.49,
+      "currency": "USD",
+      "specifications": [
+         {
+            "name": "Flavor",
+            "value": "Assorted Flavored"
+         },
+         {
+            "name": "Chocolate type",
+            "value": "Milk Chocolates"
+         },
+         {
+            "name": "Product line",
+            "value": "Party Pack"
+         },
+         {
+            "name": "Food preparation method",
+            "value": "Cream Filled"
+         },
+         {
+            "name": "Retail packaging",
+            "value": "Variety Pack"
+         },
+         {
+            "name": "Size descriptor",
+            "value": "Mini"
+         },
+         {
+            "name": "Brand",
+            "value": "Hershey's"
+         },
+         {
+            "name": "Assembled product weight",
+            "value": "36.24 oz"
+         },
+         {
+            "name": "Texture",
+            "value": "Creamy, Smooth"
+         },
+         {
+            "name": "Shelf life",
+            "value": "113 days"
+         },
+         {
+            "name": "Container type",
+            "value": "Bag"
+         },
+         {
+            "name": "Nutrition facts label image",
+            "value": "https://images.salsify.com/image/upload/s--9MboUbbb--/c_pad,ar_1:1/c_limit,h_2200,w_2200/c_mpad,h_1500,w_1500/dn_300/610fd20606a025407adad71187f04fe8c6036f33.jpg"
+         },
+         {
+            "name": "Ingredient list image",
+            "value": "https://images.salsify.com/image/upload/s--LfozUOrO--/c_pad,ar_1:1/c_limit,h_2200,w_2200/c_mpad,h_1500,w_1500/dn_300/b2a0f7fbc0668562af5da0fff58f11f5a731b301.jpg"
+         }
+      ],
+      "image_urls": [
+         "https://i5.walmartimages.com/seo/Hershey-s-Kit-Kat-And-Reese-s-Assorted-Flavored-Candy-Party-Pack-33-38-oz_e3250d57-f672-49e8-b106-115120311630.cf7efd1e5c466c373ed252ff9ae88cab.jpeg",
+         "https://i5.walmartimages.com/asr/7fb128b3-7b5a-4a83-a1db-6a496c16f108.d7c6c1fbcc7864b594815d175ee8e981.jpeg",
+         "https://i5.walmartimages.com/asr/34858b82-33bd-4062-8fe6-11a7cdf38bef.c2003ae325fbe59ffa8e431dbd113009.jpeg",
+         "https://i5.walmartimages.com/asr/7c6a24ae-f6a6-4f20-bc98-5f99fef4fa60.666b4018b5067a9f3c06849fb6fcb56d.jpeg",
+         "https://i5.walmartimages.com/asr/acc76841-2de8-4c77-9321-f70b48b004e2.fb38f7f8c27b47066a70d6d246e71d6e.jpeg",
+         "https://i5.walmartimages.com/asr/179a092f-4159-4c59-aff1-21d996aecc56.d93827e826604801eb6232cca5c8ed54.jpeg",
+         "https://i5.walmartimages.com/asr/27a22a13-27c0-446d-b2b7-1a7e1ca36602.88d195bba97ce912c06496be4b736279.jpeg",
+         "https://i5.walmartimages.com/asr/585c9608-c526-455b-8bc8-2ef95e27ef96.bbb4f6df6ed69447f98174aeccb3dbcf.jpeg",
+         "https://i5.walmartimages.com/asr/dda4bcfe-02fa-48d4-8e19-5989b447cd9b.d37f49d625c2879603008e335b1a5479.jpeg"
+      ],
+      "brand": "Hershey's",
+      "retailer": "www.walmart.com",
+      "is_available": true
+   }
+]

@@ -79,7 +79,7 @@ func ScrapeProductData(retailer string, productURL string, zipcode string) error
 	}
 
 	// Now store this response.json file in the Cloudflare R2 bucket.
-	err = StoreObjectInR2("response.json", "Snapshots/ItemSnapshots/")
+	err = StoreObjectInR2("response.json", "Snapshots/ItemSnapshots/", GenObjectKeyByUUID)
 	if err != nil {
 		return fmt.Errorf("Failed to store object in R2 bucket: %v", err)
 	}
@@ -153,7 +153,7 @@ func ScrapeSearchData(retailer string, searchQuery string, zipcode string) error
 	}
 
 	// Now store this response.json file in the Cloudflare R2 bucket.
-	err = StoreObjectInR2("response.json", "Snapshots/SearchSnapshots/")
+	err = StoreObjectInR2("response.json", "Snapshots/SearchSnapshots/", GenObjectKeyByUUID)
 	if err != nil {
 		return fmt.Errorf("Failed to store object in R2 bucket: %v", err)
 	}
