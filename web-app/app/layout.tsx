@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Figtree } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -13,9 +13,8 @@ export const metadata: Metadata = {
   description: "Save Money on gorceries",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
@@ -26,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${figtree.className} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
