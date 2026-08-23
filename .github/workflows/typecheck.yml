@@ -1,0 +1,29 @@
+name: TypeScript Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: webdev/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./webdev
+        run: npm install
+
+      - name: Type check
+        working-directory: ./webdev
+        run: npx tsc -b --noEmit
