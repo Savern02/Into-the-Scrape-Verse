@@ -37,7 +37,7 @@ export function Hero() {
           <p className="text-center text-5xl leading-none font-bold">
             Cheap Chick <br />
           </p>
-          <p className="text-sm leading-none text-center">
+          <p className="text-sm leading-none text-center font-semibold">
             Compare groceries from the biggest retailers
           </p>
         </div>
