@@ -72,7 +72,7 @@ func StoreObjectInR2(filename string, path string, method generate_key) error {
 func StoreInSupabase(data WalmartProductData) error {
 	//Load the Supabase client.
 	supabaseUrl := `https://ngxbytljmnrgxhnnajrn.supabase.co`
-	supabaseKey := os.Getenv("SUPABASE_PUBLIC_KEY")
+	supabaseKey := os.Getenv("SUPABASE_SECRET_KEY")
 	sbClient, err := supabase.NewClient(supabaseUrl, supabaseKey, &supabase.ClientOptions{})
 	if err != nil {
 		return fmt.Errorf("Failed to initalize the supabase client: %v", err)

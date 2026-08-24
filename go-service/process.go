@@ -18,6 +18,7 @@ type WalmartProductData struct {
 	Brand        string   `json:"brand"`
 	Retailer     string   `json:"retailer"`
 	Availability bool     `json:"is_available"` // Just checking stock availability for now, but we can add more detailed availability information later if needed.
+	Zipcode      string   `jsdon:"zip_code"`
 }
 
 // A struct that represents a single specification coming from the product.
@@ -107,8 +108,6 @@ func ProcessPageData(filename string) error {
 	if err != nil {
 		return fmt.Errorf("Failed to store search page urls in R2: %v", err)
 	}
-
-	// From the WalmartSearchPageData struct, construct a queue of new product scrapes to perform.
 
 	fmt.Printf("Scraped product urls: %+v\n", page)
 
