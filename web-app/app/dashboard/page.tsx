@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,7 +12,19 @@ import {
 
 import { ProductCard } from "@/components/g-ui/item"
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient()
+
+  const { data: products, error } = await supabase
+    .from("product_data")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10)
+
+  if (error) {
+    console.error("Failed to fetch products:", error)
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -41,35 +54,20 @@ export default function DashboardPage() {
 
         <Carousel className="w-full">
           <CarouselContent>
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/redbull.jpg"
-                name="Red Bull Sugar Free Energy Drink"
-                itemUrl="/dashboard/products/redbull"
-                price="$7.98"
-                website="Walmart"
-              />
-            </CarouselItem>
-
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/beans.jpg"
-                name="Great Value Black Beans"
-                itemUrl="/dashboard/products/beans"
-                price="$1.24"
-                website="Walmart"
-              />
-            </CarouselItem>
-
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/milk.jpg"
-                name="Great Value Vitamin D Whole Milk"
-                itemUrl="/dashboard/products/milk"
-                price="$3.48"
-                website="Walmart"
-              />
-            </CarouselItem>
+            {products?.map((product) => (
+              <CarouselItem
+                key={product.id}
+                className="basis-full sm:basis-1/2 lg:basis-1/3"
+              >
+                <ProductCard
+                  image={product.image_urls[0]}
+                  name={product.brand}
+                  itemUrl={product.url}
+                  price={`${product.currency}${product.final_price}`}
+                  website={product.retailer}
+                />
+              </CarouselItem>
+            ))}
           </CarouselContent>
 
           <CarouselPrevious />
@@ -94,42 +92,7 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        <Carousel className="w-full">
-          <CarouselContent>
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/redbull.jpg"
-                name="Red Bull Sugar Free Energy Drink"
-                itemUrl="/dashboard/products/redbull"
-                price="$7.98"
-                website="Walmart"
-              />
-            </CarouselItem>
-
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/redbull.jpg"
-                name="Red Bull Sugar Free Energy Drink"
-                itemUrl="/dashboard/products/redbull"
-                price="$8.98"
-                website="Target"
-              />
-            </CarouselItem>
-
-            <CarouselItem className="basis-full sm:basis-1/2 lg:basis-1/3">
-              <ProductCard
-                image="/products/redbull.jpg"
-                name="Red Bull Sugar Free Energy Drink"
-                itemUrl="/dashboard/products/redbull"
-                price="$9.48"
-                website="Kroger"
-              />
-            </CarouselItem>
-          </CarouselContent>
-
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        {/* Comparison products will go here */}
       </section>
     </div>
   )
