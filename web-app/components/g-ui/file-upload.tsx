@@ -4,9 +4,18 @@ import { useRef, useState } from "react"
 import { Upload } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
-export function FileUpload() {
+interface FileUploadProps {
+  onFileSelect: (file: File) => void
+}
+
+export function FileUpload({ onFileSelect }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
+
+  const handleFile = (file: File | undefined) => {
+    if (!file) return
+    onFileSelect(file)
+  }
 
   return (
     <div
@@ -18,9 +27,7 @@ export function FileUpload() {
       onDrop={(e) => {
         e.preventDefault()
         setDragging(false)
-
-        const files = e.dataTransfer.files
-        console.log(files)
+        handleFile(e.dataTransfer.files[0])
       }}
       onClick={() => inputRef.current?.click()}
       className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-10 text-center transition-colors ${
@@ -32,7 +39,7 @@ export function FileUpload() {
       <Upload className="mb-3 h-8 w-8" />
 
       <p className="text-sm font-medium">
-        Drop your file here
+        Drop your grocery.txt here
       </p>
 
       <p className="mt-1 text-xs text-muted-foreground">
@@ -42,9 +49,10 @@ export function FileUpload() {
       <Input
         ref={inputRef}
         type="file"
+        accept=".txt"
         className="hidden"
         onChange={(e) => {
-          console.log(e.target.files)
+          handleFile(e.target.files?.[0])
         }}
       />
     </div>

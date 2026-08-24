@@ -13,20 +13,49 @@ export default async function SettingsPage() {
 
   const userId = data.claims.sub
 
-  const { data: profile, error: profileError } = await supabase
+  let { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("username, first_name, last_name, avatar_url, zip_code")
     .eq("id", userId)
-    .single()
+    .maybeSingle()
 
   if (profileError) {
-    console.error("Failed to fetch profile:", profileError)
+    console.error(
+      "Failed to fetch profile:",
+      profileError.message
+    )
+  }
+
+  // Create a blank profile if one doesn't exist
+  if (!profile) {
+    const { data: newProfile, error: insertError } =
+      await supabase
+        .from("profiles")
+        .insert({
+          id: userId,
+        })
+        .select(
+          "username, first_name, last_name, avatar_url, zip_code"
+        )
+        .single()
+
+    if (insertError) {
+      console.error(
+        "Failed to create profile:",
+        insertError.message
+      )
+    } else {
+      profile = newProfile
+    }
   }
 
   return (
     <div className="max-w-2xl space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
+        <h1 className="text-3xl font-bold">
+          Settings
+        </h1>
+
         <p className="text-muted-foreground">
           Manage your profile information.
         </p>
