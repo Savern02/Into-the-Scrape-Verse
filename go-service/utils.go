@@ -109,7 +109,7 @@ func StoreInSupabase(data WalmartProductData) error {
 }
 
 // The purpose of this function is to generate unique object keys for the R2 bucket using the SHA-256 hash of the JSON data.
-// Doing this ensures that duplicate JSON data that we try to store will cause a failure.
+// Doing this ensures that duplicate JSON data that we try to store will cause an overwrite of what was previously in that location.
 // The prefix is the path in the bucket where the file will be stored.
 // This function works correctly, but the issue arises that Bright Data's scraper returns the JSON data with a timestamp, so even if the product data is the same, the JSON data will be different and thus the hash will be different.
 // This means that we will end up with duplicate files in the R2 bucket for the same product data, which is not ideal.

@@ -10,6 +10,7 @@ import (
 
 // A struct that represents the data we want to scrape from a Walmart product page.
 type WalmartProductData struct {
+	ProductName  string   `json:"product_name"`
 	URL          string   `json:"url"`
 	Price        float64  `json:"final_price"`
 	Currency     string   `json:"currency"`
