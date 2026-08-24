@@ -111,21 +111,23 @@ export function Hero() {
       >
       <div className="flex flex-row gap-5">
       <Receipt
-    items={[
-      { name: "MILK", price: 3.49 },
-      { name: "EGGS", price: 4.29 },
-      { name: "BREAD", price: 2.99 },
-      { name: "BANANAS", price: 1.87 },
-    ]}
-  />
-              <Receipt
-    items={[
-      { name: "MILK", price: 3.49 },
-      { name: "EGGS", price: 4.29 },
-      { name: "BREAD", price: 2.99 },
-      { name: "BANANAS", price: 1.87 },
-    ]}
-  />
+  retailer="Walmart"
+  zipcode="74103"
+  items={[
+    { name: "Milk", price: 3.48 },
+    { name: "Eggs", price: 2.98 },
+    { name: "Bread", price: 2.24 },
+  ]}
+/>
+             <Receipt
+  retailer="Target"
+  zipcode="74103"
+  items={[
+    { name: "Milk", price: 5.48 },
+    { name: "Eggs", price: 3.98 },
+    { name: "Bread", price: 1.24 },
+  ]}
+/>
   </div>
 
       </Section>

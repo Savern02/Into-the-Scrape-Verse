@@ -28,6 +28,34 @@ interface RetailerReceipt {
   retailer: string
   items: ReceiptItem[]
 }
+function productMatches(
+  product: Product,
+  groceryItem: string
+): boolean {
+  const search = groceryItem.toLowerCase().trim()
+
+  if (product.brand?.toLowerCase().includes(search)) {
+    return true
+  }
+
+  const specifications = JSON.stringify(
+    product.specifications
+  ).toLowerCase()
+
+  return specifications.includes(search)
+}
+
+function getProductName(product: Product): string {
+  if (product.brand) {
+    return product.brand
+  }
+
+  const specifications = JSON.stringify(
+    product.specifications
+  )
+
+  return specifications.slice(0, 50)
+}
 
 export default function GroceryListPage() {
   const [receipts, setReceipts] = useState<RetailerReceipt[]>([])
